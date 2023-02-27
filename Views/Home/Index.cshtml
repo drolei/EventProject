@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center" id="myArea" v-on:click="countEvent2">
+    <button v-on:click="countEvent" class="mt-20">Click to trigger an event</button>
+    <p class="mt-20">Click on the div to trigger an event</p>
+
+    <textarea class=" form-control mt-20" v-model="text" ></textarea>
+</div>
+<style>  
+    .mt-20 {
+        margin-top: 200px;
+    }
+</style>
+@section Scripts {
+<script>
+    var app = new Vue ({
+        el: "#myArea",
+        data: {
+            text: "",
+            interval: undefined,
+            counter: 1,
+            counter2: 2
+        },
+            mounted() {
+                var vm = this;
+                console.log('start');
+                vm.interval = setInterval(() => {
+                        axios.get('@Url.Action("GetValues")')
+                            .then(res => {
+                                vm.text = res.data;                                
+                            });                   
+                }, 60000);
+
+            },
+            methods: {             
+                countEvent(event) {
+                    if (event) {
+                        console.log(event.target.tagName)
+                        const postData = {
+                            text: 'Click on the button',
+                            someValue: 1
+                        };                       
+                        axios.post('@Url.Action("SaveEventData")', postData)
+                           .then(function (response) {
+
+                             })
+                       .catch(function (error) {
+                              console.log(error);
+                          });
+                    }
+                },
+                countEvent2(event) {
+                    if (event) {
+                        console.log(event.target.tagName)
+                        const postData = {
+                            text: 'Click on the div',
+                            someValue: 2
+                        };
+                        axios.post('@Url.Action("SaveEventData")', postData)
+                            .then(function (response) {
+
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                    }
+                },
+            }
+    })
+</script>
+}
